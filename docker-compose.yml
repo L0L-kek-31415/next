@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  next:
+    container_name: next
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 3002:3002
+    command: npm run dev
+    networks:
+      - common_network
+
+networks:
+  common_network:
+    external: true
