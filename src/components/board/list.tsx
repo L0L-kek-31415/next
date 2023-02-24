@@ -51,7 +51,6 @@ const Boards = (props: { id: number }) => {
     getUser();
 
     if (!boards) {
-      console.log("no boards");
       // @ts-ignore
       socketIn.current.emit("boardByProject", props.id, (event: any) => {
         setBoard(event.data);
@@ -60,9 +59,7 @@ const Boards = (props: { id: number }) => {
 
     // @ts-ignore
     socketIn.current.addEventListener("boardByProject", (event: any) => {
-      console.log("before event", boards);
       setBoard(event.data);
-      console.log("updated evetn data", event.data);
     });
     return () => {
       // @ts-ignore
@@ -73,7 +70,6 @@ const Boards = (props: { id: number }) => {
   function handleDragEnd(event: any) {
     const { active, over } = event;
     if (over && active.data.board_id != over.id) {
-      console.log(boards, "boards in drag end");
       const boardsUpdate: Array<any> = [];
       boards.filter((board: any) => {
         const newTickets: any[] = [];
