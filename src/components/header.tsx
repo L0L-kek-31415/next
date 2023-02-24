@@ -128,7 +128,7 @@ export default function Header() {
             handleClose();
             localStorage.removeItem("access");
             setUserId("");
-            setData({ email: "", role: "", socket: null});
+            setData({ email: "", role: "" });
             Router.push("/signin");
           }}
         >

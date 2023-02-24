@@ -12,7 +12,7 @@ const Main: React.FC<Props> = () => {
     const getUser = async () => {
       const currUser = (await userService.me()).data;
       setUserId(currUser.id);
-      setData({ email: currUser.email, role: currUser.role, socket: null });
+      setData({ email: currUser.email, role: currUser.role });
     };
     getUser();
   }, []);

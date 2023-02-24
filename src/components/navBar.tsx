@@ -62,6 +62,9 @@ export default function MyDrawer() {
         </ListItem>
       ))}
       <Divider />
+      {data.role == "admin" ? 
+      <AddProject /> : 
+      <></>}
     </List>
   );
 }

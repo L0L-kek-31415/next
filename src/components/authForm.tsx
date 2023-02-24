@@ -40,13 +40,15 @@ const AuthForm: React.FC<Props> = ({ children, href, link, reqLink }) => {
         localStorage.setItem("access", response.data);
         const userData = (await userService.me()).data;
         setUserId(userData.id);
-        setData({ role: userData.role, email: userData.email, socket: null });
+        setData({ role: userData.role, email: userData.email });
         Router.push("/");
       }
       Router.push("/signin");
 
     } catch (error: any) {
-      setErrors([error.response.data.message]);
+      if (error.response){
+        setErrors([error.response.data.message]);
+      }
     }
   };
 

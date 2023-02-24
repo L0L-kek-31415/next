@@ -48,15 +48,21 @@ const Boards = (props: { id: number }) => {
     };
     getUser();
 
-    // @ts-ignore
-    socket.current.emit("boardByProject", props.id, (event: any) => {
+    if (!boards) {
+      console.log('no boards')
+      // @ts-ignore
+      socket.current.emit("boardByProject", props.id, (event: any) => {
+
       setBoard(event.data);
     });
+    }
 
     // @ts-ignore
     socket.current.addEventListener("boardByProject", (event: any) => {
-      // console.log(`Received message: ${JSON.stringify(event.data)}`);
+      console.log("before event", boards)
       setBoard(event.data);
+      console.log("updated evetn data", event.data)
+
     });
     return () => {
       // @ts-ignore
@@ -66,18 +72,36 @@ const Boards = (props: { id: number }) => {
 
   function handleDragEnd(event: any) {
     const { active, over } = event;
-    // @ts-ignore
-    socket.current.emit("changeTicket", {
-      project_id: props.id,
-      board_id: over.id,
-      ticket_id: active.id,
-    });
+    if (over && active.data.current.board_id != over.id) {
+      console.log(boards, "boards in drag end")
+      const boardsUpdate: Array<any>= []
+      boards.filter((board: any) => {
+        const newTickets: any[] = []
+        board.tickets.filter((ticket: any) => {
+          if(ticket.id != active.id) {
+            newTickets.push(ticket)
+          }
+        })
+        boardsUpdate.push({id: board.id, title: board.title, tickets: newTickets})
+      })
+      setBoard(boardsUpdate)
+      // @ts-ignore
+      socket.current.emit("changeTicket", {
+        project_id: props.id,
+        board_id: over.id,
+        ticket_id: active.id,
+      });
+    }
+
   }
   return (
     <div style={{ marginLeft: 300 }}>
       <Header></Header>
       <AddMember id={props.id} />
-      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+      <DndContext 
+        // onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}>
         {Array.isArray(boards) &&
           boards.map(
             (board: { tickets: Array<any>; id: number; title: string }) => {

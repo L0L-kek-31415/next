@@ -1,6 +1,5 @@
 "use client";
 
-import { Global } from "@emotion/react";
 import {
   createContext,
   useContext,

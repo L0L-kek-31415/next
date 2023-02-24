@@ -17,6 +17,9 @@ const OneBoard: React.FC<Props> = ({ project_id, id, title, tickets }) => {
   const { data } = useGlobalContext();
   const { isOver, setNodeRef } = useDroppable({
     id: id,
+    data: {
+      tickets: tickets,
+    }
   });
 
   return (
@@ -61,6 +64,7 @@ const OneBoard: React.FC<Props> = ({ project_id, id, title, tickets }) => {
               description={ticket.description}
               updated_at={ticket.updated_at}
               created_at={ticket.created_at}
+              board_id={id}
             />
           );
         })}

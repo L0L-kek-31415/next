@@ -20,13 +20,14 @@ const AddTicket: React.FC<Props> = ({ projectID, boardID }) => {
   };
 
   const createTicket = async () => {
-    const me = await userService.me();
     data.socket.emit("createTicket", {
       title: title,
       description: description,
       board_id: boardID,
       project_id: projectID,
     });
+    setTitle("")
+    setDescription('')
     setOpen(false);
   };
 
@@ -39,8 +40,8 @@ const AddTicket: React.FC<Props> = ({ projectID, boardID }) => {
         }}
         style={{
           backgroundColor: "whitesmoke",
-          width: "50vw",
-          height: "30vw",
+          width: "30vw",
+          height: "15vw",
           margin: "0 auto",
           marginTop: "50px",
           borderRadius: "5vw",
