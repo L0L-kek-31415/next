@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Alert, Box, Button, Modal, TextField } from "@mui/material";
 import userService from "@/services/user.service";
 import { useGlobalContext } from "@/context/store";
 
@@ -13,22 +13,29 @@ const AddTicket: React.FC<Props> = ({ projectID, boardID }) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const { data } = useGlobalContext();
+  const { data, socket } = useGlobalContext();
+  const [error, setErrors] = useState("");
 
   const handleOpen = () => {
     setOpen(true);
   };
 
   const createTicket = async () => {
-    data.socket.emit("createTicket", {
-      title: title,
-      description: description,
-      board_id: boardID,
-      project_id: projectID,
-    });
-    setTitle("")
-    setDescription('')
-    setOpen(false);
+    if (!title) {
+      setErrors("Title is required");
+    } else if (!description) {
+      setErrors("Description is required");
+    } else {
+      socket.emit("createTicket", {
+        title: title,
+        description: description,
+        board_id: boardID,
+        project_id: projectID,
+      });
+      setTitle("");
+      setDescription("");
+      setOpen(false);
+    }
   };
 
   return (
@@ -41,7 +48,7 @@ const AddTicket: React.FC<Props> = ({ projectID, boardID }) => {
         style={{
           backgroundColor: "whitesmoke",
           width: "30vw",
-          height: "15vw",
+          height: "20vw",
           margin: "0 auto",
           marginTop: "50px",
           borderRadius: "5vw",
@@ -77,6 +84,13 @@ const AddTicket: React.FC<Props> = ({ projectID, boardID }) => {
               setDescription(ev.target.value);
             }}
           />
+          {error ? (
+            <Alert severity="error" sx={{ width: 300 }}>
+              {error}
+            </Alert>
+          ) : (
+            <></>
+          )}
           <Button onClick={() => createTicket()}>Create</Button>
         </Box>
       </Modal>

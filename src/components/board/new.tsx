@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Alert, Box, Button, Modal, TextField } from "@mui/material";
 import userService from "@/services/user.service";
 import { useGlobalContext } from "@/context/store";
 
@@ -12,7 +12,8 @@ interface Props {
 const AddBoard: React.FC<Props> = ({ projectID }) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const { userId, data } = useGlobalContext();
+  const { userId, data, socket } = useGlobalContext();
+  const [error, setErrors] = useState("");
 
   const handleOpen = () => {
     setOpen(true);
@@ -23,11 +24,17 @@ const AddBoard: React.FC<Props> = ({ projectID }) => {
 
   const createBoard = async () => {
     const me = await userService.me();
-    data.socket.emit("createBoard", {
-      title: title,
-      project_id: projectID,
-    });
-    handleClose();
+    if (!title) {
+      setErrors("Title is required");
+    } else {
+      setErrors("");
+      socket.emit("createBoard", {
+        title: title,
+        project_id: projectID,
+      });
+      handleClose();
+      setTitle("");
+    }
   };
 
   if (data.role == "admin") {
@@ -69,6 +76,13 @@ const AddBoard: React.FC<Props> = ({ projectID }) => {
                 setTitle(ev.target.value);
               }}
             />
+            {error ? (
+              <Alert severity="error" sx={{ width: 300 }}>
+                {error}
+              </Alert>
+            ) : (
+              <></>
+            )}
             <Button onClick={() => createBoard()}>Create</Button>
           </Box>
         </Modal>

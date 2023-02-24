@@ -11,20 +11,23 @@ import {
 type DataType = {
   email: string;
   role: string;
-  socket: any;
 };
 
 interface ContextProps {
   userId: string;
   setUserId: Dispatch<SetStateAction<string>>;
   data: DataType;
+  socket: any;
+  setSocket: Dispatch<SetStateAction<any>>;
   setData: Dispatch<SetStateAction<DataType>>;
 }
 
 const GlobalContext = createContext<ContextProps>({
   userId: "",
+  socket: null,
   setUserId: (): string => "",
-  data: { email: "", role: "", socket: null },
+  setSocket: (): any => null,
+  data: { email: "", role: "" },
   setData: (): void => {},
 });
 
@@ -33,11 +36,13 @@ export const GlobalContextProvider = ({ children }: any) => {
   const [data, setData] = useState<DataType>({
     email: "",
     role: "",
-    socket: null,
   });
+  const [socket, setSocket] = useState<any>(null);
 
   return (
-    <GlobalContext.Provider value={{ userId, setUserId, data, setData }}>
+    <GlobalContext.Provider
+      value={{ userId, setUserId, socket, setSocket, data, setData }}
+    >
       {children}
     </GlobalContext.Provider>
   );

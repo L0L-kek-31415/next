@@ -23,18 +23,20 @@ const Boards = (props: { id: number }) => {
     }),
     useSensor(KeyboardSensor)
   );
-  const { userId, setUserId, data, setData } = useGlobalContext();
+  const { userId, setUserId, socket, setSocket, data, setData } =
+    useGlobalContext();
   const [boards, setBoard] = useState<any>();
 
-  const socket = useRef<WebSocket | null>(null);
+  const socketIn = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     // @ts-ignore
-    socket.current = socketIO.connect("ws://localhost:3000", {
-      extraHeaders: {Authorization: localStorage ? 
-      "Bearer " + localStorage.getItem('access') :
-      null
-    }
+    socketIn.current = socketIO.connect("ws://localhost:3000", {
+      extraHeaders: {
+        Authorization: localStorage
+          ? "Bearer " + localStorage.getItem("access")
+          : null,
+      },
     });
 
     const getUser = async () => {
@@ -43,65 +45,63 @@ const Boards = (props: { id: number }) => {
       setData({
         email: currUser.email,
         role: currUser.role,
-        socket: socket.current,
       });
+      setSocket(socketIn.current);
     };
     getUser();
 
     if (!boards) {
-      console.log('no boards')
+      console.log("no boards");
       // @ts-ignore
-      socket.current.emit("boardByProject", props.id, (event: any) => {
-
-      setBoard(event.data);
-    });
+      socketIn.current.emit("boardByProject", props.id, (event: any) => {
+        setBoard(event.data);
+      });
     }
 
     // @ts-ignore
-    socket.current.addEventListener("boardByProject", (event: any) => {
-      console.log("before event", boards)
+    socketIn.current.addEventListener("boardByProject", (event: any) => {
+      console.log("before event", boards);
       setBoard(event.data);
-      console.log("updated evetn data", event.data)
-
+      console.log("updated evetn data", event.data);
     });
     return () => {
       // @ts-ignore
-      socket.current.close();
+      socketIn.current.close();
     };
-  }, [socket, props.id]);
+  }, [socketIn, props.id]);
 
   function handleDragEnd(event: any) {
     const { active, over } = event;
-    if (over && active.data.current.board_id != over.id) {
-      console.log(boards, "boards in drag end")
-      const boardsUpdate: Array<any>= []
+    if (over && active.data.board_id != over.id) {
+      console.log(boards, "boards in drag end");
+      const boardsUpdate: Array<any> = [];
       boards.filter((board: any) => {
-        const newTickets: any[] = []
+        const newTickets: any[] = [];
         board.tickets.filter((ticket: any) => {
-          if(ticket.id != active.id) {
-            newTickets.push(ticket)
+          if (ticket.id != active.id) {
+            newTickets.push(ticket);
           }
-        })
-        boardsUpdate.push({id: board.id, title: board.title, tickets: newTickets})
-      })
-      setBoard(boardsUpdate)
+        });
+        boardsUpdate.push({
+          id: board.id,
+          title: board.title,
+          tickets: newTickets,
+        });
+      });
+      setBoard(boardsUpdate);
       // @ts-ignore
-      socket.current.emit("changeTicket", {
+      socket.emit("changeTicket", {
         project_id: props.id,
         board_id: over.id,
         ticket_id: active.id,
       });
     }
-
   }
   return (
     <div style={{ marginLeft: 300 }}>
       <Header></Header>
       <AddMember id={props.id} />
-      <DndContext 
-        // onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        sensors={sensors}>
+      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
         {Array.isArray(boards) &&
           boards.map(
             (board: { tickets: Array<any>; id: number; title: string }) => {
@@ -115,7 +115,7 @@ const Boards = (props: { id: number }) => {
               );
             }
           )}
-        <AddBoard socket={socket.current} projectID={props.id}></AddBoard>
+        <AddBoard socket={socket} projectID={props.id}></AddBoard>
       </DndContext>
     </div>
   );

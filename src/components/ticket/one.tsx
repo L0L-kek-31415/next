@@ -4,7 +4,6 @@ import { CardContent, CardHeader } from "@material-ui/core";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useDraggable } from "@dnd-kit/core";
 import { useGlobalContext } from "@/context/store";
-import { useEffect, useState } from "react";
 
 export interface ITicket {
   project_id: number;
@@ -13,7 +12,7 @@ export interface ITicket {
   description: string;
   updated_at: Date;
   created_at: Date;
-  board_id: number
+  board_id: number;
 }
 
 export const OneTicket: React.FC<ITicket> = ({
@@ -27,10 +26,9 @@ export const OneTicket: React.FC<ITicket> = ({
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
     data: {
-      board_id: board_id
-    }
-  })
-
+      board_id: board_id,
+    },
+  });
 
   const style = transform
     ? {

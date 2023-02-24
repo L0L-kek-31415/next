@@ -45,17 +45,13 @@ export default function Header() {
         <Grid container spacing={2}>
           {userId ? (
             <Grid item xs={4}>
-              <Button
-                onClick={() => Router.push("/")}
-              >
+              <Button onClick={() => Router.push("/")}>
                 <Typography sx={{ minWidth: 100 }}>Projects</Typography>
               </Button>
             </Grid>
           ) : (
             <Grid item xs={4}>
-              <Button
-                onClick={() => Router.push("/signup")}
-              >
+              <Button onClick={() => Router.push("/signup")}>
                 <Typography sx={{ minWidth: 100 }}>Sign Up</Typography>
               </Button>
             </Grid>
@@ -78,9 +74,7 @@ export default function Header() {
               </Tooltip>
             ) : (
               <Grid item xs={4}>
-                <Button
-                  onClick={() => Router.push("/signin")}
-                >
+                <Button onClick={() => Router.push("/signin")}>
                   <Typography sx={{ minWidth: 100 }}>Sign In</Typography>
                 </Button>
               </Grid>

@@ -44,9 +44,8 @@ const AuthForm: React.FC<Props> = ({ children, href, link, reqLink }) => {
         Router.push("/");
       }
       Router.push("/signin");
-
     } catch (error: any) {
-      if (error.response){
+      if (error.response) {
         setErrors([error.response.data.message]);
       }
     }

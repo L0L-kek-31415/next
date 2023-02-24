@@ -14,12 +14,12 @@ interface Props {
 }
 
 const OneBoard: React.FC<Props> = ({ project_id, id, title, tickets }) => {
-  const { data } = useGlobalContext();
+  const { data, socket } = useGlobalContext();
   const { isOver, setNodeRef } = useDroppable({
     id: id,
     data: {
       tickets: tickets,
-    }
+    },
   });
 
   return (
@@ -43,7 +43,7 @@ const OneBoard: React.FC<Props> = ({ project_id, id, title, tickets }) => {
           sx={{ float: "right" }}
           onClick={() => {
             // @ts-ignore
-            data.socket.emit("deleteBoard", {
+            socket.emit("deleteBoard", {
               board_id: id,
               project_id: project_id,
             });
